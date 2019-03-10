@@ -1,4 +1,5 @@
 from copy import copy
+import matplotlib.pyplot as plt
 import numpy as np
 import random
 import time
@@ -21,7 +22,7 @@ class LearnedAgent:
     def __init__(self, q_table=None):
         self.q_table = q_table if q_table else np.zeros([pow(3, 9), 9])
         self.alpha = 0.1
-        self.eps = 0.001
+        self.eps = 0.0001
         self.gamma = 0.9
 
     def learn(self, state, action, new_state, reward):
@@ -37,16 +38,19 @@ class LearnedAgent:
         else:
             return np.argmax(self.q_table[state])
 
-
+old_q_table = LearnedAgent().q_table
 agent1 = LearnedAgent()
 agent2 = RandomAgent()
 env = Environment()
-epochs = 50
-train_size = 1000
+epochs = 20
+train_size = 10000
 test_size = 1000
 games_to_debug = 0
 record_losses = False
 
+win_ratios = []
+draw_ratios = []
+loss_ratios = []
 for idx_e, e in enumerate(range(epochs)):
     print("Start of epoch {}:".format(idx_e+1))
     # time.sleep(1)
@@ -55,7 +59,6 @@ for idx_e, e in enumerate(range(epochs)):
         # env.render()
         done = False
         while not done:
-    
             state = env.get_state()
             cur_go = env.who_next()
             if cur_go == Player.X: 
@@ -86,7 +89,7 @@ for idx_e, e in enumerate(range(epochs)):
 
             # env.render()
 
-    print("Test time!")
+    print("\tTest time!")
     winners = np.array([])
     debug = False
     for i in range(test_size):
@@ -128,3 +131,14 @@ for idx_e, e in enumerate(range(epochs)):
     losses = np.count_nonzero(winners==Player.O)
     print("\tRatio is {}/{}/{}".format(wins / len(winners), draws / len(winners), losses / len(winners)))
     # time.sleep(2) 
+
+    win_ratios.append(wins/len(winners))
+    draw_ratios.append(draws/len(winners))
+    loss_ratios.append(losses/len(winners))
+    print("\tQ-table changed by {}%".format(100 * np.linalg.norm(agent1.q_table - old_q_table)/np.linalg.norm(agent1.q_table)))
+    old_q_table = copy(agent1.q_table)
+
+plt.plot(win_ratios,'g')
+plt.plot(draw_ratios,'b')
+plt.plot(loss_ratios,'r')
+plt.show()
