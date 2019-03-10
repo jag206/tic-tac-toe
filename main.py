@@ -4,6 +4,7 @@ import time
 from env import Environment
 
 env = Environment()
+env.reset()
 env.render()
 
 num_steps = 1000

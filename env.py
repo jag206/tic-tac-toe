@@ -9,6 +9,9 @@ class Player(IntEnum):
 
 class Environment:
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         self.board = np.array([Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED])
         self.next_go = Player.X
 
@@ -66,6 +69,12 @@ class Environment:
 
         return False
 
+    def _check_draw(self):
+        if (self.board > Player.UNASSIGNED).all() and not self._check_win():
+            return True
+
+        return False
+
     def play(self, idx):
         # check if valid
         if self.board[idx] > Player.UNASSIGNED:
@@ -73,6 +82,9 @@ class Environment:
 
         self.board[idx] = self.next_go
         if self._check_win():
+            return True, True
+
+        if self._check_draw():
             return True, True
 
         self._change_go()
