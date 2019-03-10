@@ -37,40 +37,40 @@ class Environment:
     def _check_win(self):
         if self.board[0] == self.board[1] and self.board[1] == self.board[2]:
             if self.board[0] > Player.UNASSIGNED:
-                return True
+                return True, self.board[0]
 
         if self.board[3] == self.board[4] and self.board[4] == self.board[5]:
             if self.board[3] > Player.UNASSIGNED:
-                return True
+                return True, self.board[3]
 
         if self.board[6] == self.board[7] and self.board[7] == self.board[8]:
             if self.board[6] > Player.UNASSIGNED:
-                return True
+                return True, self.board[6]
 
         if self.board[0] == self.board[3] and self.board[3] == self.board[6]:
             if self.board[0] > Player.UNASSIGNED:
-                return True
+                return True, self.board[0]
 
         if self.board[1] == self.board[4] and self.board[4] == self.board[7]:
             if self.board[1] > Player.UNASSIGNED:
-                return True
+                return True, self.board[1]
 
         if self.board[2] == self.board[5] and self.board[5] == self.board[8]:
             if self.board[2] > Player.UNASSIGNED:
-                return True
+                return True, self.board[2]
 
         if self.board[0] == self.board[4] and self.board[4] == self.board[8]:
             if self.board[0] > Player.UNASSIGNED:
-                return True
+                return True, self.board[0]
 
         if self.board[2] == self.board[4] and self.board[4] == self.board[6]:
             if self.board[2] > Player.UNASSIGNED:
-                return True
+                return True, self.board[2]
 
-        return False
+        return False, Player.UNASSIGNED
 
     def _check_draw(self):
-        if (self.board > Player.UNASSIGNED).all() and not self._check_win():
+        if (self.board > Player.UNASSIGNED).all():
             return True
 
         return False
@@ -78,17 +78,18 @@ class Environment:
     def play(self, idx):
         # check if valid
         if self.board[idx] > Player.UNASSIGNED:
-            return False, False
+            return False, False, Player.UNASSIGNED
 
         self.board[idx] = self.next_go
-        if self._check_win():
-            return True, True
+        over, winner = self._check_win()
+        if over:
+            return True, True, winner
 
         if self._check_draw():
-            return True, True
+            return True, True, Player.UNASSIGNED
 
         self._change_go()
-        return True, False
+        return True, False, Player.UNASSIGNED
 
     def who_next(self):
         if self.next_go == Player.X:

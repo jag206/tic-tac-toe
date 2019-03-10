@@ -14,10 +14,11 @@ while not done:
     # time.sleep(2)
     square = random.randint(0, 8)
     print("Playing in square {}".format(square))
-    valid, done = env.play(square)
+    valid, done, winner = env.play(square)
     if not valid:
         print("Oops, that move was invalid")
 
     env.render()
 
+print("Winner is {}".format(winner))
 print("Done!")
