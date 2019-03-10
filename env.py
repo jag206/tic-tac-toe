@@ -11,6 +11,13 @@ class Environment:
     def __init__(self):
         self.reset()
 
+    def get_state(self):
+        total = 0
+        for idx, x in enumerate(np.flip(self.board)):
+            total += x * pow(3, idx)
+
+        return total
+
     def reset(self):
         self.board = np.array([Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED, Player.UNASSIGNED])
         self.next_go = Player.X
@@ -75,9 +82,13 @@ class Environment:
 
         return False
 
+    def action_space(self):
+        return np.where(self.board == Player.UNASSIGNED)[0]
+
     def play(self, idx):
         # check if valid
         if self.board[idx] > Player.UNASSIGNED:
+            self._change_go()
             return False, False, Player.UNASSIGNED
 
         self.board[idx] = self.next_go
@@ -92,17 +103,25 @@ class Environment:
         return True, False, Player.UNASSIGNED
 
     def who_next(self):
-        if self.next_go == Player.X:
+        return self.next_go
+
+    def who_next_str(self):
+        who_next = self.who_next()
+        if who_next == Player.X:
             return "X"
-        if self.next_go == Player.O:
+        elif who_next == Player.O:
             return "O"
 
         raise Exception("Unknown player!")
 
+
     def render(self):
-        print(" {} | {} | {} ".format(self._render(0), self._render(1), self._render(2)))
-        print("-----------")
-        print(" {} | {} | {} ".format(self._render(3), self._render(4), self._render(5)))
-        print("-----------")
-        print(" {} | {} | {} ".format(self._render(6), self._render(7), self._render(8)))
-        print("\n")
+        s = ""
+        s += " {} | {} | {} \n".format(self._render(0), self._render(1), self._render(2))
+        s += "-----------\n"
+        s += " {} | {} | {} \n".format(self._render(3), self._render(4), self._render(5))
+        s += "-----------\n"
+        s += " {} | {} | {} \n".format(self._render(6), self._render(7), self._render(8))
+        s += "\n"
+
+        return s
