@@ -34,7 +34,7 @@ class LearnedAgent:
 
     def process(self, state, learning=True):
         if learning and random.uniform(0, 1) < self.eps:
-            return random.randint(0, 8)
+            return random.randint(0, 7)
         else:
             return np.argmax(self.q_table[state])
 
@@ -61,7 +61,7 @@ for idx_e, e in enumerate(range(epochs)):
         while not done:
             state = env.get_state()
             cur_go = env.who_next()
-            if cur_go == Player.X: 
+            if cur_go == Player.X:
                 action = agent1.process(state, learning=True)
             else:
                 action = agent2.process(state, learning=True)
@@ -130,7 +130,7 @@ for idx_e, e in enumerate(range(epochs)):
     draws = np.count_nonzero(winners==Player.UNASSIGNED)
     losses = np.count_nonzero(winners==Player.O)
     print("\tRatio is {}/{}/{}".format(wins / len(winners), draws / len(winners), losses / len(winners)))
-    # time.sleep(2) 
+    # time.sleep(2)
 
     win_ratios.append(wins/len(winners))
     draw_ratios.append(draws/len(winners))
